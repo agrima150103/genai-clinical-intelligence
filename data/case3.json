@@ -1,0 +1,18 @@
+{
+  "patient_id": "P003",
+  "age": 65,
+  "comorbidities": ["Smoking", "High Cholesterol"],
+  "diagnosis": "Possible Cardiac Event",
+  "vitals": {
+    "blood_pressure": "160/100",
+    "heart_rate": 120,
+    "oxygen_saturation": "94%"
+  },
+  "timeline": [
+    {"day": 1, "event": "Severe chest pain radiating to left arm"},
+    {"day": 2, "event": "Given painkillers, no ECG performed"},
+    {"day": 3, "event": "Symptoms worsen, shortness of breath"},
+    {"day": 5, "event": "No escalation to cardiac evaluation"}
+  ],
+  "expected_response_days": 1
+}

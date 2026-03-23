@@ -1,0 +1,18 @@
+{
+  "patient_id": "P001",
+  "age": 58,
+  "comorbidities": ["Diabetes", "Hypertension"],
+  "diagnosis": "Suspected Pneumonia",
+  "vitals": {
+    "temperature": "102 F",
+    "oxygen_saturation": "91%",
+    "heart_rate": 110
+  },
+  "timeline": [
+    {"day": 1, "event": "High fever, cough, low oxygen saturation"},
+    {"day": 2, "event": "Prescribed Antibiotic A"},
+    {"day": 4, "event": "No improvement, oxygen drops to 89%"},
+    {"day": 6, "event": "Same medication continued despite worsening"}
+  ],
+  "expected_response_days": 3
+}

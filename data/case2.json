@@ -1,0 +1,18 @@
+{
+  "patient_id": "P002",
+  "age": 30,
+  "comorbidities": [],
+  "diagnosis": "Mild Viral Infection",
+  "vitals": {
+    "temperature": "100 F",
+    "oxygen_saturation": "98%",
+    "heart_rate": 80
+  },
+  "timeline": [
+    {"day": 1, "event": "Mild fever and fatigue"},
+    {"day": 2, "event": "Prescribed rest and medication"},
+    {"day": 3, "event": "Symptoms improving"},
+    {"day": 5, "event": "Full recovery"}
+  ],
+  "expected_response_days": 3
+}

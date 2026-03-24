@@ -41,7 +41,6 @@ AI-powered multi-agent clinical decision support system that analyzes patient ti
 genai-clinical-intelligence/
 │
 ├── app.py                  # Main Streamlit dashboard
-├── test_openai.py          # API testing (optional)
 │
 ├── data/                   # Patient case datasets
 │   ├── case1.json

@@ -1,0 +1,14 @@
+{
+  "patient_id": "P005",
+  "age": 45,
+  "comorbidities": ["Asthma"],
+  "diagnosis": "Acute Bronchitis",
+  "vitals": {"temperature": "101 F", "oxygen_saturation": "96%", "heart_rate": 88},
+  "timeline": [
+    {"day": 1, "event": "Cough and mild breathing difficulty"},
+    {"day": 2, "event": "Prescribed inhaler and antibiotics"},
+    {"day": 4, "event": "Symptoms improving, oxygen stable"},
+    {"day": 6, "event": "Full recovery, discharged"}
+  ],
+  "expected_response_days": 4
+}

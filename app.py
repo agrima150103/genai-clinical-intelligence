@@ -164,7 +164,7 @@ if uploaded_file:
 
         # Source badge
         badge_html = (
-            '<span class="llm-badge">GPT-4o-mini</span>'
+            f'<span class="llm-badge">{llm_result.get("provider", "LLM")}</span>'
             if source == "llm"
             else '<span class="fallback-badge">Rule-based fallback</span>'
         )
@@ -240,7 +240,7 @@ if uploaded_file:
         for log in audit_logs:
             st.write(f"• {log}")
         if source == "llm":
-            st.write("• Step 4: LLM reasoning engine called — GPT-4o-mini")
+            st.write("• Step 4: LLM reasoning engine called — Groq (Llama3)")
             st.write("• Step 5: Causal reasoning and what-if scenario generated")
 
 # ── FOOTER ───────────────────────────────────────────────────────────────────

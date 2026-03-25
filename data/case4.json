@@ -1,0 +1,15 @@
+{
+  "patient_id": "P004",
+  "age": 72,
+  "comorbidities": ["Kidney Disease", "Diabetes"],
+  "diagnosis": "Post-Surgical Infection",
+  "vitals": {"temperature": "103 F", "oxygen_saturation": "90%", "heart_rate": 118},
+  "timeline": [
+    {"day": 1, "event": "Post-surgery fever begins"},
+    {"day": 2, "event": "Prescribed broad-spectrum antibiotic"},
+    {"day": 3, "event": "No improvement, temperature rises"},
+    {"day": 5, "event": "Worsening — sepsis indicators present"},
+    {"day": 7, "event": "Same antibiotic continued, no culture ordered"}
+  ],
+  "expected_response_days": 2
+}

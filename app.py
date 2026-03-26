@@ -10,10 +10,10 @@ from modules.reasoning_engine import analyze_case
 
 st.set_page_config(page_title="GenAI Atlas", layout="wide")
 
-# ── STYLING ──────────────────────────────────────────────────────────────────
+# ── STYLING ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-.block-container { padding-top: 1rem !important; padding-bottom: 0rem !important; }
+.block-container { padding-top: 1rem !important; }
 
 .signal {
     display: inline-block;
@@ -23,7 +23,7 @@ st.markdown("""
     color: white;
     font-weight: 500;
 }
-.red   { background: #ff4b4b; }
+.red { background: #ff4b4b; }
 .green { background: #00c853; }
 
 .risk-high {
@@ -31,39 +31,24 @@ st.markdown("""
     padding: 16px;
     border-radius: 12px;
     text-align: center;
-    font-weight: bold;
     color: white;
+    font-weight: bold;
 }
 .risk-medium {
     background: linear-gradient(90deg, #ff8c00, #ffa500);
     padding: 16px;
     border-radius: 12px;
     text-align: center;
-    font-weight: bold;
     color: white;
+    font-weight: bold;
 }
 .risk-low {
     background: linear-gradient(90deg, #00c853, #00e676);
     padding: 16px;
     border-radius: 12px;
     text-align: center;
+    color: white;
     font-weight: bold;
-    color: white;
-}
-
-.llm-badge {
-    background: #7c3aed;
-    color: white;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-}
-.fallback-badge {
-    background: #6b7280;
-    color: white;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 12px;
 }
 
 .causal-box {
@@ -72,6 +57,7 @@ st.markdown("""
     padding: 14px;
     border-radius: 8px;
 }
+
 .whatif-box {
     background: rgba(239, 68, 68, 0.08);
     border-left: 4px solid #ef4444;
@@ -81,28 +67,32 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── HEADER ──────────────────────────────────────────────────────────────────
+# ── HEADER ────────────────────────────────────────────────────────────────
 st.title("🧠 GenAI Atlas — Clinical Intelligence Dashboard")
 st.caption("AI-powered Multi-Agent Clinical Decision System | Powered by Groq (Llama3)")
 
-# ── SIDEBAR ──────────────────────────────────────────────────────────────────
+# ── SIDEBAR (UNCHANGED + SETTINGS) ─────────────────────────────────────────
 with st.sidebar:
     st.header("About GenAI Atlas")
     st.markdown("""
-GenAI Atlas detects silent clinical failures before they escalate.
+**GenAI Atlas** detects silent clinical failures before they escalate.
 
-Agents:
-- Clinical Agent — signal extraction  
-- Compliance Agent — guideline checks  
-- Risk Agent — severity scoring  
-- Reasoning Engine — LLM causal analysis  
-- Explanation Agent — plain-language summary  
-- Audit Agent — decision trail  
+**Agents:**
+- 🔬 Clinical Agent — signal extraction  
+- ⚖️ Compliance Agent — guideline checks  
+- ⚠️ Risk Agent — severity scoring  
+- 🧠 Reasoning Engine — LLM causal analysis  
+- 📋 Explanation Agent — plain-language summary  
+- 📊 Audit Agent — decision trail  
+
+**GenAI Layer:**
+- Groq (Llama3)
+- Structured JSON output
+- What-if scenarios
+- Fallback support
 """)
 
     st.markdown("---")
-
-    # ✅ FIXED SETTINGS BLOCK (THIS WAS YOUR ERROR)
     st.header("⚙️ Settings")
 
     mode = st.radio(
@@ -110,13 +100,13 @@ Agents:
         ["Hybrid", "LLM Only", "Rule-Based Only"]
     )
 
-# ── FILE UPLOAD ──────────────────────────────────────────────────────────────
+# ── FILE UPLOAD ───────────────────────────────────────────────────────────
 uploaded_file = st.file_uploader("📂 Upload Patient Case JSON", type="json")
 
 if uploaded_file:
     case_data = json.load(uploaded_file)
 
-    # ── PATIENT INFO ────────────────────────────────────────────────────────
+    # ── PATIENT INFO ───────────────────────────────────────────────────────
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Patient ID", case_data.get("patient_id", "N/A"))
     col2.metric("Age", case_data.get("age", "N/A"))
@@ -128,12 +118,12 @@ if uploaded_file:
     if case_data.get("comorbidities"):
         st.markdown(f"**Comorbidities:** {', '.join(case_data['comorbidities'])}")
 
-    # ── TIMELINE ────────────────────────────────────────────────────────────
+    # ── TIMELINE ──────────────────────────────────────────────────────────
     st.subheader("🗂 Clinical Timeline")
     for event in case_data["timeline"]:
-        st.write(f"Day {event['day']} → {event['event']}")
+        st.write(f"📅 Day {event['day']} → {event['event']}")
 
-    # ── RUN ANALYSIS ────────────────────────────────────────────────────────
+    # ── RUN ANALYSIS ──────────────────────────────────────────────────────
     if st.button("🚀 Run GenAI Analysis"):
         with st.spinner("Running analysis..."):
 
@@ -145,46 +135,58 @@ if uploaded_file:
 
             llm_result = analyze_case(case_data)
 
-        # ── MODE SWITCH LOGIC ───────────────────────────────────────────────
+        # ── MODE LOGIC ────────────────────────────────────────────────────
         if mode == "LLM Only":
             final_risk = llm_result.get("risk", "Low")
+            recommendations = llm_result.get("recommendations", [])
+            explanations = llm_result.get("explanations", [])
             source = "llm"
 
         elif mode == "Rule-Based Only":
             final_risk = risk_result["risk"]
-            source = "fallback"
+            recommendations = explanation
+            explanations = explanation
+            source = "rule"
 
-        else:  # Hybrid
+        else:  # HYBRID
             final_risk = risk_result["risk"]
-            source = llm_result.get("source", "fallback")
 
-        # ── DEBUG PANEL ─────────────────────────────────────────────────────
-        with st.expander("🔍 Debug Panel"):
-            st.write("Rule Risk:", risk_result["risk"])
-            st.write("LLM Risk:", llm_result.get("risk"))
-            st.write("Mode:", mode)
+            # 🔥 MAIN DIFFERENCE HERE
+            recommendations = (
+                ["[RULE] " + r for r in explanation] +
+                ["[AI] " + r for r in llm_result.get("recommendations", [])]
+            )
 
-        # ── SOURCE BADGE ────────────────────────────────────────────────────
-        if source == "llm":
-            st.markdown('<span class="llm-badge">LLM Powered</span>', unsafe_allow_html=True)
+            explanations = (
+                explanation +
+                llm_result.get("explanations", [])
+            )
+
+            source = "hybrid"
+
+        # ── MODE LABEL ────────────────────────────────────────────────────
+        if source == "hybrid":
+            st.info("⚡ Hybrid Mode: Rule-based detection + AI reasoning")
+        elif source == "llm":
+            st.info("🤖 LLM Mode: Pure AI reasoning")
         else:
-            st.markdown('<span class="fallback-badge">Rule-Based</span>', unsafe_allow_html=True)
+            st.info("📏 Rule-Based Mode: Deterministic clinical logic")
 
-        # ── RISK BANNER ─────────────────────────────────────────────────────
+        # ── RISK BANNER ───────────────────────────────────────────────────
         if final_risk == "High":
-            st.markdown('<div class="risk-high">HIGH RISK</div>', unsafe_allow_html=True)
+            st.markdown('<div class="risk-high">🚨 HIGH RISK</div>', unsafe_allow_html=True)
         elif final_risk == "Medium":
-            st.markdown('<div class="risk-medium">MEDIUM RISK</div>', unsafe_allow_html=True)
+            st.markdown('<div class="risk-medium">⚠️ MEDIUM RISK</div>', unsafe_allow_html=True)
         else:
-            st.markdown('<div class="risk-low">LOW RISK</div>', unsafe_allow_html=True)
+            st.markdown('<div class="risk-low">✅ LOW RISK</div>', unsafe_allow_html=True)
 
         st.markdown("---")
 
         col1, col2 = st.columns(2)
 
-        # ── LEFT ────────────────────────────────────────────────────────────
+        # ── LEFT COLUMN ───────────────────────────────────────────────────
         with col1:
-            st.subheader("Clinical Signals")
+            st.subheader("🔬 Clinical Signals")
 
             def pill(text, condition):
                 cls = "red" if condition else "green"
@@ -199,7 +201,7 @@ if uploaded_file:
                 unsafe_allow_html=True,
             )
 
-            st.subheader("Compliance")
+            st.subheader("⚖️ Compliance")
             if compliance_result["compliant"]:
                 st.success("Compliant")
             else:
@@ -207,36 +209,39 @@ if uploaded_file:
                 for v in compliance_result["violations"]:
                     st.write("•", v)
 
-        # ── RIGHT ───────────────────────────────────────────────────────────
+        # ── RIGHT COLUMN ──────────────────────────────────────────────────
         with col2:
-            st.subheader("Recommendations")
+            st.subheader("💊 Recommendations")
 
-            recs = llm_result.get("recommendations") or explanation
-            for r in recs:
+            # 🔥 CLEAR VISUAL DIFFERENCE
+            if mode == "Hybrid":
+                st.markdown("**🧩 Combined Intelligence (Rules + AI)**")
+
+            for r in recommendations:
                 st.write("•", r)
 
-            confidence = llm_result.get("confidence", 70)
+            confidence = llm_result.get("confidence", risk_result.get("confidence", 70))
             st.metric("Confidence", f"{confidence}%")
 
-        # ── LLM EXTRA OUTPUT ────────────────────────────────────────────────
-        if source == "llm":
+        # ── LLM EXTRA ─────────────────────────────────────────────────────
+        if source in ["llm", "hybrid"]:
             if llm_result.get("causal_reasoning"):
-                st.subheader("Causal Reasoning")
+                st.subheader("🧠 Causal Reasoning")
                 st.markdown(f'<div class="causal-box">{llm_result["causal_reasoning"]}</div>', unsafe_allow_html=True)
 
             if llm_result.get("what_if"):
-                st.subheader("What If Scenario")
+                st.subheader("🔮 What If Scenario")
                 st.markdown(f'<div class="whatif-box">{llm_result["what_if"]}</div>', unsafe_allow_html=True)
 
-        # ── EXPLANATION ─────────────────────────────────────────────────────
-        st.subheader("Explanation")
-        for e in (llm_result.get("explanations") or explanation):
+        # ── EXPLANATION ───────────────────────────────────────────────────
+        st.subheader("📋 Explanation")
+        for e in explanations:
             st.write("•", e)
 
-        # ── AUDIT ───────────────────────────────────────────────────────────
-        st.subheader("Audit Trail")
+        # ── AUDIT ────────────────────────────────────────────────────────
+        st.subheader("📊 Audit Trail")
         for log in audit_logs:
             st.write("•", log)
 
-# ── FOOTER ───────────────────────────────────────────────────────────────────
-st.caption("GenAI Atlas | Multi-Agent Clinical Intelligence System")
+# ── FOOTER ────────────────────────────────────────────────────────────────
+st.caption("⚡ GenAI Atlas | Multi-Agent Clinical Intelligence System")

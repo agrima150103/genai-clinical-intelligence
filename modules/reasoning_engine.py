@@ -14,11 +14,17 @@ llm_provider = None
 try:
     from groq import Groq
     groq_key = os.getenv("GROQ_API_KEY")
+
+    print("DEBUG → GROQ KEY:", groq_key)   
+
     if groq_key:
         client = Groq(api_key=groq_key)
         llm_provider = "groq"
+    else:
+        print("❌ GROQ API KEY NOT FOUND")
+
 except ImportError:
-    pass
+    print("❌ GROQ PACKAGE NOT INSTALLED")
 
 if client is None:
     try:

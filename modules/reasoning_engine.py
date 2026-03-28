@@ -3,11 +3,10 @@ import json
 
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    load_dotenv(dotenv_path=".env")
 except ImportError:
     pass
 
-# Try Groq first (free), then OpenAI (paid)
 client = None
 llm_provider = None
 

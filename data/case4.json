@@ -1,15 +1,18 @@
 {
   "patient_id": "P004",
-  "age": 72,
-  "comorbidities": ["Kidney Disease", "Diabetes"],
-  "diagnosis": "Post-Surgical Infection",
-  "vitals": {"temperature": "103 F", "oxygen_saturation": "90%", "heart_rate": 118},
+  "age": 34,
+  "comorbidities": ["Depression", "Anxiety", "OCD"],
+  "diagnosis": "Suspected Medication Overdose",
+  "vitals": {
+    "temperature": "98 F",
+    "oxygen_saturation": "97%",
+    "heart_rate": 105
+  },
   "timeline": [
-    {"day": 1, "event": "Post-surgery fever begins"},
-    {"day": 2, "event": "Prescribed broad-spectrum antibiotic"},
-    {"day": 3, "event": "No improvement, temperature rises"},
-    {"day": 5, "event": "Worsening — sepsis indicators present"},
-    {"day": 7, "event": "Same antibiotic continued, no culture ordered"}
+    {"day": 1, "event": "Brought in unconscious, suspected pill overdose"},
+    {"day": 1, "event": "Prescribed activated charcoal and monitoring"},
+    {"day": 2, "event": "Patient stable, no psychiatric evaluation ordered"},
+    {"day": 3, "event": "Discharged without mental health follow-up"}
   ],
-  "expected_response_days": 2
+  "expected_response_days": 1
 }

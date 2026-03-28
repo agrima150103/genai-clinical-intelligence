@@ -32,12 +32,11 @@ def extract_clinical_signals(case_data):
         if "chest pain" in text:
             signals["chest_pain"] = True
 
-    # Days since medication
+    
     if medication_day:
         last_day = timeline[-1]["day"]
         signals["days_since_medication"] = last_day - medication_day
 
-    # Vitals-based signals
     oxygen = vitals.get("oxygen_saturation", "")
 
     if isinstance(oxygen, str) and "%" in oxygen:
@@ -48,7 +47,7 @@ def extract_clinical_signals(case_data):
         except:
             pass
 
-    # Age-based risk
+    
     if age >= 60:
         signals["high_risk_age"] = True
 

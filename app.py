@@ -117,7 +117,6 @@ def get_mode_view_data():
     }
 
 
-# ── CSS ────────────────────────────────────────────────────────────────────
 st.markdown(
     """
 <style>
@@ -144,7 +143,6 @@ html, body, [class*="css"] {
     max-width: 1500px;
 }
 
-/* Base buttons */
 .stButton > button {
     border-radius: 12px;
     border: 1px solid rgba(176, 228, 204, 0.18);
@@ -157,12 +155,10 @@ html, body, [class*="css"] {
     color: white;
 }
 
-/* Top controls wrapper */
 .top-controls {
     margin-bottom: 0.65rem;
 }
 
-/* Settings expander - pill trigger */
 div[data-testid="stExpander"] {
     border: none !important;
     background: transparent !important;
@@ -203,7 +199,6 @@ div[data-testid="stExpander"] details[open] summary {
     margin-bottom: 0.7rem !important;
 }
 
-/* Settings content box */
 div[data-testid="stExpander"] details > div {
     background: #0d1a1a !important;
     border: 1px solid rgba(176, 228, 204, 0.14) !important;
@@ -218,12 +213,10 @@ div[data-testid="stExpander"] * {
     color: white !important;
 }
 
-/* Radio spacing inside settings */
 div[data-testid="stExpander"] div[role="radiogroup"] {
     gap: 0.4rem !important;
 }
 
-/* Hero */
 .hero-wrap {
     margin-top: 1rem;
     margin-bottom: 2rem;
@@ -254,14 +247,12 @@ div[data-testid="stExpander"] div[role="radiogroup"] {
     text-align: left;
 }
 
-/* Upload block */
 div[data-testid="stFileUploader"] {
     background: rgba(255,255,255,0.04);
     border-radius: 16px;
     padding: 0.75rem 0.75rem 0 0.75rem;
 }
 
-/* Standard cards */
 .section-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(176, 228, 204, 0.08);
@@ -269,7 +260,6 @@ div[data-testid="stFileUploader"] {
     padding: 1.2rem 1.25rem;
 }
 
-/* About cards */
 .about-card {
     background: rgba(64, 138, 113, 0.10);
     border-left: 4px solid #408A71;
@@ -289,7 +279,6 @@ div[data-testid="stFileUploader"] {
     line-height: 2.0;
 }
 
-/* Pills */
 .signal {
     display: inline-block;
     padding: 10px 16px;
@@ -298,9 +287,8 @@ div[data-testid="stFileUploader"] {
     font-weight: 600;
     font-size: 14px;
     color: white;
+    background: #2b7058;
 }
-.red { background: #9f1f1f; }
-.green { background: #2b7058; }
 
 .risk-high {
     background: linear-gradient(90deg, #9f1f1f, #d13232);
@@ -393,7 +381,6 @@ with right_col:
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-
 components.html(
     """
     <script>
@@ -416,7 +403,6 @@ components.html(
     height=0,
 )
 
-# ── ABOUT PAGE ─────────────────────────────────────────────────────────────
 if st.session_state.page == "about":
     st.markdown('<div class="hero-wrap"><div class="hero-center">', unsafe_allow_html=True)
     st.markdown('<div class="hero-title">About GenAI Atlas</div>', unsafe_allow_html=True)
@@ -477,7 +463,6 @@ st.file_uploader(
 
 st.markdown("</div></div>", unsafe_allow_html=True)
 
-# ── MAIN LOGIC ────────────────────────────────────────────────
 case_data = st.session_state.case_data
 
 if case_data:
@@ -531,20 +516,50 @@ if view and st.session_state.analysis:
 
     with col_left:
         st.markdown("<div class='section-card'>", unsafe_allow_html=True)
+
+        st.subheader("Early Symptoms")
+        early_symptoms = clinical_data.get("early_symptoms", [])
+        if early_symptoms:
+            st.markdown(
+                "".join([f'<span class="signal">{symptom}</span>' for symptom in early_symptoms]),
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown('<span class="signal">No early symptoms captured</span>', unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
         st.subheader("Clinical Signals")
 
-        def pill(text, cond):
-            cls = "red" if cond else "green"
-            return f'<span class="signal {cls}">{text}</span>'
+        signal_labels = {
+            "low_oxygen": "Low oxygen",
+            "high_risk_age": "High-risk age",
+            "chest_pain": "Chest pain",
+            "worsening": "Worsening",
+            "no_improvement": "No improvement",
+            "tachycardia": "Tachycardia",
+            "hypertension": "Hypertension",
+            "treatment_failure": "Treatment failure",
+            "improving": "Improving",
+            "stable_recovery": "Stable recovery",
+            "cardiac_risk": "Cardiac risk",
+            "missing_ecg": "Missing ECG",
+            "overdose_risk": "Overdose risk",
+            "mental_health_risk": "Mental health risk",
+            "missing_psychiatric_eval": "Missing psych eval",
+            "unsafe_discharge": "Unsafe discharge",
+            "specialist_escalation_needed": "Specialist escalation",
+        }
 
-        st.markdown(
-            pill("Low oxygen", clinical_data["low_oxygen"])
-            + pill("High-risk age", clinical_data["high_risk_age"])
-            + pill("Chest pain", clinical_data["chest_pain"])
-            + pill("Worsening", clinical_data["worsening"])
-            + pill("No improvement", clinical_data["no_improvement"]),
-            unsafe_allow_html=True,
-        )
+        active_signals = [label for key, label in signal_labels.items() if clinical_data.get(key)]
+
+        if active_signals:
+            st.markdown(
+                "".join([f'<span class="signal">{label}</span>' for label in active_signals]),
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown('<span class="signal">No major signals detected</span>', unsafe_allow_html=True)
 
         st.subheader("Compliance")
         if compliance_result["compliant"]:
